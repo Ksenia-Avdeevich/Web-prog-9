@@ -1,0 +1,289 @@
+/* style.css — стили клиентской части (Лаб9: добавлены стили для реакций и WebSocket-статуса) */
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500&family=Stalinist+One&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f9f0;
+  color: #2d4a1e;
+}
+
+h1 {
+  font-family: 'Stalinist One', cursive;
+  font-size: 1.5em;
+  color: #1a5e2a;
+  text-align: center;
+  margin: 0;
+  letter-spacing: 1px;
+  padding: 25px 25px 10px;
+}
+
+h2 {
+  font-family: 'Stalinist One', cursive;
+  font-size: 1.05em;
+  color: #2e7d32;
+  margin-top: 0;
+  border-left: 5px solid #81c784;
+  padding-left: 12px;
+}
+
+#ws-status {
+  text-align: center;
+  font-size: 0.88em;
+  padding: 6px 12px;
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s;
+}
+
+.ws-connected {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-bottom: 1px solid #a5d6a7;
+}
+
+.ws-disconnected {
+  background-color: #fff3e0;
+  color: #e65100;
+  border-bottom: 1px solid #ffcc80;
+}
+
+#controls {
+  background-color: #c8e6c9;
+  padding: 20px 30px;
+  margin: 20px 25px;
+}
+
+button {
+  font-family: 'Jost', sans-serif;
+  font-size: 1em;
+  background-color: #2e7d32;
+  color: #f4f9f0;
+  border: none;
+  padding: 10px 18px;
+  margin: 6px 8px 6px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button:hover { background-color: #1a5e2a; }
+button:disabled { background-color: #a5d6a7; cursor: not-allowed; }
+button.cancel { background-color: #78909c; }
+button.cancel:hover { background-color: #546e7a; }
+button.danger { background-color: #c62828; }
+button.danger:hover { background-color: #8e0000; }
+
+#output-block {
+  margin: 0 25px 20px;
+  padding: 16px 20px;
+  border: 2px solid #81c784;
+  min-height: 50px;
+}
+
+#output {
+  font-size: 1em;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+#table-block {
+  margin: 0 25px 30px;
+  padding: 16px 20px;
+  border: 2px solid #a5d6a7;
+}
+
+#filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  background: #e8f5e9;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border: 1px solid #c8e6c9;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-group span {
+  font-size: 0.9em;
+  color: #2d4a1e;
+  white-space: nowrap;
+}
+
+#search-input {
+  font-family: 'Jost', sans-serif;
+  font-size: 1em;
+  padding: 8px 12px;
+  border: 1px solid #81c784;
+  background: #fff;
+  color: #2d4a1e;
+  width: 220px;
+}
+
+#search-input:focus { outline: 2px solid #2e7d32; }
+
+#limit-select {
+  font-family: 'Jost', sans-serif;
+  font-size: 1em;
+  padding: 8px 10px;
+  border: 1px solid #81c784;
+  background: #fff;
+  color: #2d4a1e;
+  cursor: pointer;
+}
+
+#sort-asc-btn, #sort-desc-btn { padding: 8px 14px; font-size: 0.95em; }
+
+button.active-sort {
+  background-color: #1a5e2a;
+  box-shadow: inset 0 0 0 2px #a5d6a7;
+}
+
+#table-info {
+  font-size: 0.88em;
+  color: #558b2f;
+  margin-bottom: 8px;
+  min-height: 1.4em;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1em;
+}
+
+th {
+  background-color: #2e7d32;
+  color: #f4f9f0;
+  padding: 10px 14px;
+  text-align: left;
+}
+
+td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #c8e6c9;
+  vertical-align: top;
+}
+
+tr:nth-child(4n+1) td { background-color: #ffffff; }
+tr:nth-child(4n+3) td { background-color: #f1f8f1; }
+
+.empty { color: #7a9e7e; font-style: italic; }
+
+/* ─── Emoji реакции ───────────────────────────────────────────── */
+.reaction-row td {
+  padding: 4px 14px 10px;
+  border-bottom: 2px solid #a5d6a7;
+  background-color: inherit;
+}
+
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.reaction-btn {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88em;
+  background-color: #e8f5e9;
+  color: #2d4a1e;
+  border: 1px solid #a5d6a7;
+  padding: 4px 10px;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background 0.15s, transform 0.1s;
+  line-height: 1.4;
+}
+
+.reaction-btn:hover {
+  background-color: #c8e6c9;
+  transform: scale(1.1);
+}
+
+/* ─── Пагинация ───────────────────────────────────────────────── */
+#pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+#pagination button { padding: 8px 14px; font-size: 0.95em; margin: 0; }
+
+#pagination button.pag-num { padding: 8px 12px; background-color: #558b2f; }
+
+#pagination button.pag-num.active {
+  background-color: #1a5e2a;
+  box-shadow: inset 0 0 0 2px #a5d6a7;
+  font-weight: 700;
+}
+
+.pag-dots { padding: 0 4px; color: #7a9e7e; font-size: 1.1em; line-height: 1; align-self: center; }
+
+/* ─── Модальные окна ──────────────────────────────────────────── */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal.hidden { display: none; }
+
+.modal-box {
+  background: #f4f9f0;
+  padding: 28px 32px;
+  width: 420px;
+  max-width: 95vw;
+  border: 2px solid #81c784;
+}
+
+.modal-box h3 {
+  margin: 0 0 16px;
+  color: #1a5e2a;
+  font-family: 'Stalinist One', cursive;
+  font-size: 1em;
+}
+
+.modal-box label { display: block; margin-bottom: 12px; font-size: 0.95em; color: #2d4a1e; }
+
+.modal-box input[type="text"],
+.modal-box input[type="number"],
+.modal-box textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 1em;
+  border: 1px solid #81c784;
+  background: #fff;
+  color: #2d4a1e;
+}
+
+.modal-box textarea { height: 90px; resize: vertical; }
+
+.modal-actions { margin-top: 18px; display: flex; gap: 10px; }
+
+footer {
+  text-align: center;
+  font-size: 0.85em;
+  color: #7a9e7e;
+  border-top: 1px solid #c8e6c9;
+  padding: 16px;
+  margin-top: 10px;
+}

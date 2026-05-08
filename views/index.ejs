@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ботанический сад — Express + WebSocket</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <h1>Центральный ботанический сад НАН Беларуси</h1>
+
+  <!-- Индикатор подключения WebSocket -->
+  <div id="ws-status" class="ws-disconnected">⚡ Подключение...</div>
+
+  <div id="controls">
+    <h2>Управление коллекцией растений:</h2>
+    <button onclick="openAdd()">Добавить растение</button>
+    <button onclick="openEdit()">Редактировать растение</button>
+    <button onclick="openDelete()">Удалить растение</button>
+  </div>
+
+  <!-- Модальное окно добавления -->
+  <div id="modal-add" class="modal hidden">
+    <div class="modal-box">
+      <h3>Добавить растение</h3>
+      <label>Название:<input id="add-name" type="text" placeholder="Например: Фикус"></label>
+      <label>Уход:<textarea id="add-care" placeholder="Описание ухода..."></textarea></label>
+      <div class="modal-actions">
+        <button onclick="addItem()">Добавить</button>
+        <button class="cancel" onclick="closeModal('modal-add')">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования -->
+  <div id="modal-edit" class="modal hidden">
+    <div class="modal-box">
+      <h3>Редактировать растение</h3>
+      <label>ID записи:<input id="edit-id" type="number" placeholder="1"></label>
+      <label>Новое название:<input id="edit-name" type="text" placeholder="Оставьте пустым, если не меняется"></label>
+      <label>Новый уход:<textarea id="edit-care" placeholder="Оставьте пустым, если не меняется"></textarea></label>
+      <div class="modal-actions">
+        <button onclick="editItem()">Сохранить</button>
+        <button class="cancel" onclick="closeModal('modal-edit')">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно удаления -->
+  <div id="modal-delete" class="modal hidden">
+    <div class="modal-box">
+      <h3>Удалить растение</h3>
+      <label>ID записи:<input id="delete-id" type="number" placeholder="1"></label>
+      <div class="modal-actions">
+        <button class="danger" onclick="deleteItem()">Удалить</button>
+        <button class="cancel" onclick="closeModal('modal-delete')">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="output-block">
+    <h2>Результат:</h2>
+    <div id="output">Выберите действие.</div>
+  </div>
+
+  <!-- Панель поиска, сортировки и пагинации -->
+  <div id="table-block">
+    <h2>Список растений:</h2>
+
+    <div id="filter-bar">
+      <div class="filter-group">
+        <input id="search-input" type="text" placeholder="Поиск по названию...">
+        <button onclick="applyFilters()">Найти</button>
+        <button class="cancel" onclick="clearSearch()">Сбросить</button>
+      </div>
+      <div class="filter-group">
+        <span>Сортировка:</span>
+        <button id="sort-asc-btn" onclick="setSort('asc')">А → Я</button>
+        <button id="sort-desc-btn" onclick="setSort('desc')">Я → А</button>
+        <button class="cancel" onclick="setSort('')">По умолчанию</button>
+      </div>
+      <div class="filter-group">
+        <span>Записей на стр.:</span>
+        <select id="limit-select" onchange="applyFilters()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="table-info"></div>
+    <div id="table-container">Загрузка...</div>
+    <div id="pagination"></div>
+  </div>
+
+  <footer>Ботанический сад — Лабораторная работа №9. Express + EJS + Socket.IO.</footer>
+
+  <!-- Socket.IO клиент (подключается автоматически с сервера) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
