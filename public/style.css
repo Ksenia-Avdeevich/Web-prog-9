@@ -173,8 +173,7 @@ td {
   vertical-align: top;
 }
 
-tr:nth-child(4n+1) td { background-color: #ffffff; }
-tr:nth-child(4n+3) td { background-color: #f1f8f1; }
+tr td { background-color: #ffffff; }
 
 .empty { color: #7a9e7e; font-style: italic; }
 

@@ -2,7 +2,7 @@
 
 const API = '/api/items';
 
-// ─── Состояние таблицы ────────────────────────────────────────────────────────
+// Состояние таблицы 
 let state = {
   search: '',
   sort:   '',
@@ -10,24 +10,24 @@ let state = {
   limit:  5
 };
 
-// ─── Состояние реакций ────────────────────────────────────────────────────────
+//  Состояние реакций 
 // { plantId: { '🌿': count, ... } }
 let reactionsState = {};
 let availableEmojis = [];
 
-// ─── Socket.IO ────────────────────────────────────────────────────────────────
+// Socket.IO 
 const socket = io();
 
 // Индикатор подключения
 const wsStatus = document.getElementById('ws-status');
 
 socket.on('connect', () => {
-  wsStatus.textContent = '🟢 WebSocket подключён';
+  wsStatus.textContent = 'WebSocket подключён';
   wsStatus.className = 'ws-connected';
 });
 
 socket.on('disconnect', () => {
-  wsStatus.textContent = '🔴 WebSocket отключён';
+  wsStatus.textContent = 'WebSocket отключён';
   wsStatus.className = 'ws-disconnected';
 });
 
@@ -35,7 +35,7 @@ socket.on('disconnect', () => {
 socket.on('reactions:init', ({ reactions, emojis }) => {
   reactionsState  = reactions || {};
   availableEmojis = emojis || [];
-  rerenderReactions();
+  loadTable(); 
 });
 
 // Получаем обновление реакции в реальном времени (от любого клиента)
@@ -50,7 +50,9 @@ socket.on('plant:added', () => {
   loadTable();
 });
 
-// ─── Реакции ─────────────────────────────────────────────────────────────────
+
+
+//  Реакции 
 
 /** Отправить реакцию на растение */
 function sendReaction(plantId, emoji) {
@@ -94,7 +96,7 @@ function renderReactionRow(plantId) {
   return `<tr class="reaction-row"><td></td><td colspan="2"><div class="reactions">${buttons}</div></td></tr>`;
 }
 
-// ─── Вспомогательные ─────────────────────────────────────────────────────────
+// Вспомогательные 
 
 function showOutput(text) {
   document.getElementById('output').textContent = text;
@@ -108,7 +110,7 @@ function closeModal(id) {
   document.getElementById(id).classList.add('hidden');
 }
 
-// ─── Загрузка и отрисовка таблицы ────────────────────────────────────────────
+//  Загрузка и отрисовка таблицы
 
 async function loadTable() {
   const params = new URLSearchParams({
@@ -213,7 +215,7 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-// ─── Фильтры и навигация ─────────────────────────────────────────────────────
+// Фильтры и навигация 
 
 function applyFilters() {
   state.search = document.getElementById('search-input').value.trim();
@@ -248,10 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('search-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') applyFilters();
   });
-  loadTable();
 });
 
-// ─── CRUD ─────────────────────────────────────────────────────────────────────
+// CRUD 
 
 async function addItem() {
   const name = document.getElementById('add-name').value.trim();
