@@ -2,6 +2,10 @@
 
 const API = '/api/items';
 
+function getUsername() {
+  return document.getElementById('username-input').value.trim() || 'Гость';
+}
+
 // Состояние таблицы 
 let state = {
   search: '',
@@ -39,10 +43,10 @@ socket.on('reactions:init', ({ reactions, emojis }) => {
 });
 
 // Получаем обновление реакции в реальном времени (от любого клиента)
-socket.on('reactions:update', ({ plantId, emoji, count }) => {
+socket.on('reactions:update', ({ plantId, emoji, users }) => {
   if (!reactionsState[plantId]) reactionsState[plantId] = {};
-  reactionsState[plantId][emoji] = count;
-  updateReactionButton(plantId, emoji, count);
+  reactionsState[plantId][emoji] = users;
+  updateReactionButton(plantId, emoji, users);
 });
 
 // Новое растение добавлено другим пользователем — перезагружаем таблицу
@@ -56,17 +60,18 @@ socket.on('plant:added', () => {
 
 /** Отправить реакцию на растение */
 function sendReaction(plantId, emoji) {
-  socket.emit('reaction:add', { plantId: String(plantId), emoji });
+  socket.emit('reaction:add', { plantId: String(plantId), emoji, username: getUsername() });
 }
 
 /** Обновить счётчик на конкретной кнопке реакции (без перерисовки всей строки) */
-function updateReactionButton(plantId, emoji, count) {
+function updateReactionButton(plantId, emoji, users) {
   const btn = document.querySelector(
     `.reaction-btn[data-plant="${plantId}"][data-emoji="${emoji}"]`
   );
-  if (btn) {
-    btn.textContent = `${emoji} ${count}`;
-  }
+  if (!btn) return;
+  const count = users.length;
+  btn.textContent = `${emoji} ${count}`;
+  btn.title = count > 0 ? users.join(', ') : '';
 }
 
 /** Перерисовать все реакции (вызывается после полной загрузки таблицы) */
@@ -74,8 +79,9 @@ function rerenderReactions() {
   document.querySelectorAll('.reaction-btn').forEach(btn => {
     const plantId = btn.dataset.plant;
     const emoji   = btn.dataset.emoji;
-    const count   = reactionsState[plantId]?.[emoji] || 0;
-    btn.textContent = `${emoji} ${count}`;
+    const users   = reactionsState[plantId]?.[emoji] || [];
+    btn.textContent = `${emoji} ${users.length}`;
+    btn.title = users.length > 0 ? users.join(', ') : '';
   });
 }
 

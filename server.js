@@ -47,17 +47,20 @@ io.on('connection', (socket) => {
   socket.emit('reactions:init', { reactions, emojis: EMOJIS });
 
   // Обработка добавления реакции
-  socket.on('reaction:add', ({ plantId, emoji }) => {
+  socket.on('reaction:add', ({ plantId, emoji, username }) => {
     if (!plantId || !EMOJIS.includes(emoji)) return;
 
-    const id = String(plantId);
-    if (!reactions[id]) {
-      reactions[id] = {};
-    }
-    reactions[id][emoji] = (reactions[id][emoji] || 0) + 1;
+    const id   = String(plantId);
+    const name = (username || 'Гость').trim().slice(0, 30);
+    if (!reactions[id])        reactions[id] = {};
+    if (!reactions[id][emoji]) reactions[id][emoji] = [];
 
-    // Рассылаем обновление ВСЕМ подключённым клиентам
-    io.emit('reactions:update', { plantId: id, emoji, count: reactions[id][emoji] });
+    // Один пользователь — одна реакция на emoji (по имени)
+    if (!reactions[id][emoji].includes(name)) {
+      reactions[id][emoji].push(name);
+    }
+
+    io.emit('reactions:update', { plantId: id, emoji, users: reactions[id][emoji] });
   });
 
   socket.on('disconnect', () => {
